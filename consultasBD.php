@@ -65,6 +65,7 @@ if (!isset($_SESSION['email'])) {
                     border-radius: 5px;
                     cursor: pointer;
                     text-decoration: none;
+                    margin: 5px;
                 }
 
                     .button:hover {
@@ -74,7 +75,7 @@ if (!isset($_SESSION['email'])) {
                     .mis-botones {
                         display: flex;
                         flex-direction: row;
-                        justify-content: space-around;
+                        margin: 10px 10px 10px 10px;
                     }
         </style>
 </head>

@@ -1,4 +1,12 @@
 <?php
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
+require 'PHPMailer/src/Exception.php';
 //======================================================================
 // PROCESAR FORMULARIO 
 //======================================================================
@@ -80,26 +88,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         /* Envío De Email Con Token */
 
-        // Cabecera
-        $headers = [
-            'From' => 'curso@php.com',
-            'Content-type' => 'text/plain; charset=utf-8'
-        ];
-        // Variables para el email
-        $emailEncode = urlencode($email);
-        $tokenEncode = urlencode($token);
-        // Texto del email
-        $textoEmail = "
-           Hola!\n 
-           Gracias por registrate en la mejor plataforma de internet, demuestras inteligencia.\n
-           Para activar entra en el siguiente enlace:\n
-           http://midomino.com/verificar-cuenta.php?email=$emailEncode&token=$tokenEncode
-            ";
-        // Envio del email
-        mail($email, 'Activa tu cuenta', 'Gracias por suscribirte', $headers);
+        // Configuración de PHPMailer
+        $mail = new PHPMailer(true);
+        try {
+            $mail->SMTPDebug = SMTP::DEBUG_SERVER; // Nivel de depuración
+            $mail->isSMTP(); // Usar SMTP
+            $mail->Host = 'smtp.gmail.com'; // Servidor SMTP
+            $mail->SMTPAuth = true; // Habilitar autenticación SMTP
+            $mail->Username = 'depruebac310@gmail.com'; // Usuario SMTP
+            $mail->Password = 'vjyeitfrmywcqgoz'; // Contraseña SMTP
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Habilitar cifrado TLS
+            $mail->Port = 587; // Puerto TCP para TLS
+
+            // Remitente y destinatarios
+            $mail->setFrom('depruebac310@gmail.com', 'Vuestro Servidor');
+            $mail->addAddress($email);
+            
+            // Contenido del correo
+            $mail->isHTML(true);
+            $mail->Subject = 'Activa tu cuenta';
+            $emailEncode = urlencode($email);
+            $tokenEncode = urlencode($token);
+            $mail->Body = "
+            Hola!<br>
+            Gracias por registrarte en la mejor plataforma de internet, demuestras inteligencia.<br>
+            Para activar tu cuenta, por favor haz clic en el siguiente enlace:<br>
+            <a href='http://localhost/mini_proyecto/activar_cuenta.php?email=$emailEncode&token=$tokenEncode'>Activar cuenta</a>";
+
+            $mail->send();
+            echo 'Correo enviado';
+        } catch (Exception $e) {
+            echo 'Mensaje: ' . $mail->ErrorInfo;
+        }
 
         /* Redirección a login.php con GET para informar del envio del email */
-
         header('Location: identificarse.php?registrado=1');
         die();
     }
